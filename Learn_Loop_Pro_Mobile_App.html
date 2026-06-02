@@ -1,0 +1,201 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Learn Loop Pro</title>
+    <style>
+      body {
+        font-family: system-ui, sans-serif;
+        background: #eef2f7;
+        margin: 0;
+        padding: 12px;
+      }
+      .card {
+        background: #fff;
+        border-radius: 14px;
+        padding: 14px;
+        margin: 10px 0;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+      }
+      h1,
+      h2 {
+        margin: 0 0 10px;
+      }
+      input,
+      textarea {
+        width: 100%;
+        padding: 10px;
+        margin: 5px 0;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        box-sizing: border-box;
+      }
+      button {
+        padding: 10px 14px;
+        border: none;
+        border-radius: 8px;
+        background: #222;
+        color: #fff;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+      .small {
+        font-size: 0.9em;
+        color: #555;
+      }
+      .progress {
+        height: 20px;
+        background: #ddd;
+        border-radius: 10px;
+        overflow: hidden;
+      }
+      .bar {
+        height: 100%;
+        background: #4caf50;
+        width: 0%;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>📚 Learn Loop Pro</h1>
+
+    <div class="card">
+      <h2>Mission</h2>
+      <input id="goal" placeholder="What do you want to be able to do?" />
+    </div>
+
+    <div class="card">
+      <h2>Daily Dashboard</h2>
+      <div class="progress"><div class="bar" id="bar"></div></div>
+      <p id="progressText">0% complete</p>
+      <label><input type="checkbox" class="task" /> Learn (20 min)</label><br />
+      <label><input type="checkbox" class="task" /> Apply (40 min)</label><br />
+      <label><input type="checkbox" class="task" /> Notes (15 min)</label><br />
+      <label><input type="checkbox" class="task" /> Recall (15 min)</label>
+    </div>
+
+    <div class="card">
+      <h2>Skill Tree</h2>
+      <textarea id="dontknow" placeholder="Don't Know"></textarea>
+      <textarea id="learning" placeholder="Learning"></textarea>
+      <textarea id="cando" placeholder="Can Do"></textarea>
+    </div>
+
+    <div class="card">
+      <h2>Knowledge Vault</h2>
+      <textarea
+        id="vault"
+        rows="8"
+        placeholder="Store insights, notes, frameworks, examples..."
+      ></textarea>
+    </div>
+
+    <div class="card">
+      <h2>Project Tracker</h2>
+      <textarea
+        id="projects"
+        rows="5"
+        placeholder="Current projects"
+      ></textarea>
+    </div>
+
+    <div class="card">
+      <h2>Retrieval Practice</h2>
+      <textarea id="mainideas" placeholder="3 Main Ideas"></textarea>
+      <textarea id="surprised" placeholder="What surprised me?"></textarea>
+      <textarea id="teach" placeholder="Explain to an 8-year-old"></textarea>
+    </div>
+
+    <div class="card">
+      <h2>Spaced Review Schedule</h2>
+      <div class="small">Review on Day 1, Day 3, Day 7, Day 14 and Day 30.</div>
+    </div>
+
+    <div class="card">
+      <h2>Weekly Review</h2>
+      <textarea
+        id="weekly"
+        rows="6"
+        placeholder="What did I learn? What can I do now? Biggest bottleneck? Next focus?"
+      ></textarea>
+    </div>
+
+    <div class="card">
+      <h2>AI Learning Coach Prompts</h2>
+      <ul>
+        <li>What is the fastest way to learn this skill?</li>
+        <li>Create deliberate practice exercises.</li>
+        <li>Test my understanding.</li>
+        <li>What am I missing?</li>
+        <li>Create a 30-day plan.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <button onclick="saveData()">Save Progress</button>
+    </div>
+
+    <script>
+      function saveData() {
+        const ids = [
+          'goal',
+          'dontknow',
+          'learning',
+          'cando',
+          'vault',
+          'projects',
+          'mainideas',
+          'surprised',
+          'teach',
+          'weekly',
+        ];
+        ids.forEach((id) =>
+          localStorage.setItem(id, document.getElementById(id).value),
+        );
+        document
+          .querySelectorAll('.task')
+          .forEach((c, i) => localStorage.setItem('task' + i, c.checked));
+        alert('Progress Saved');
+      }
+      function loadData() {
+        const ids = [
+          'goal',
+          'dontknow',
+          'learning',
+          'cando',
+          'vault',
+          'projects',
+          'mainideas',
+          'surprised',
+          'teach',
+          'weekly',
+        ];
+        ids.forEach((id) => {
+          const v = localStorage.getItem(id);
+          if (v !== null) document.getElementById(id).value = v;
+        });
+        document.querySelectorAll('.task').forEach((c, i) => {
+          c.checked = localStorage.getItem('task' + i) === 'true';
+        });
+        updateProgress();
+      }
+      function updateProgress() {
+        let total = document.querySelectorAll('.task').length;
+        let done = [...document.querySelectorAll('.task')].filter(
+          (x) => x.checked,
+        ).length;
+        let pct = Math.round((done / total) * 100);
+        document.getElementById('bar').style.width = pct + '%';
+        document.getElementById('progressText').innerText = pct + '% complete';
+      }
+      document
+        .querySelectorAll('.task')
+        .forEach((c) => c.addEventListener('change', updateProgress));
+      loadData();
+    </script>
+  </body>
+</html>
